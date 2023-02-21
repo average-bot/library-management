@@ -8,6 +8,7 @@ import java.sql.Statement;
 
 public class Main {
     static final String DB_URL = "jdbc:mysql://localhost:3306/library";
+    // If the security was important the different roles would have different users in the db
     static final String USER = "rooter";
     static final String PASS = "rooter";
     public static void main(String[] args) throws SQLException {
