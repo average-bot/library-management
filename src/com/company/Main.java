@@ -14,7 +14,7 @@ public class Main {
         Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
         Statement statement = connection.createStatement();
 
-        Console console = new Console(statement);
+        new Console(statement);
 
         connection.close();
         statement.close();

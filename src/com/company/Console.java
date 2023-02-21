@@ -22,7 +22,9 @@ public class Console {
                         employee.adminMenu(statement);
                         break;
                     case 2:
-                        User user = new User();
+                        System.out.print("Please enter your username: ");
+                        String username = new Scanner(System.in).next();
+                        User user = new User(username);
                         user.userMenu(statement);
                         break;
                     case 3:

@@ -47,7 +47,8 @@ public class Employee {
                 deleteCategory(statement);
                 break;
             case 8:
-                break; // TODO: LOGOUT
+                System.out.println("You are now logged out!");
+                break;
             default:
                 System.out.println("Invalid option. Try again selecting a number.");
                 break;

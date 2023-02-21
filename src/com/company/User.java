@@ -8,9 +8,15 @@ import java.util.Scanner;
 
 public class User {
 
+    private String username;
+
     static final String VIEW_QUERY_CAT = "SELECT libraryitem.Id, category.Id AS category_id, category.CategoryName, libraryitem.Title, libraryitem.Author, libraryitem.Pages, libraryitem.RunTimeMinutes, libraryitem.isBorrowable, libraryitem.Borrower, libraryitem.BorrowDate, libraryitem.ItemType FROM libraryitem LEFT JOIN category ON Category.Id= libraryitem.CategoryId ORDER BY category.CategoryName ASC;";
     static final String VIEW_QUERY_TYPE = "SELECT libraryitem.Id, category.Id AS category_id, category.CategoryName, libraryitem.Title, libraryitem.Author, libraryitem.Pages, libraryitem.RunTimeMinutes, libraryitem.isBorrowable, libraryitem.Borrower, libraryitem.BorrowDate, libraryitem.ItemType FROM libraryitem LEFT JOIN category ON Category.Id= libraryitem.CategoryId ORDER BY libraryitem.ItemType ASC;";
     boolean sortingByCat = false;
+
+    public User(String username) {
+        this.username = username;
+    }
 
     public void userMenu(Statement statement) throws SQLException {
         System.out.print("Please choose an option:\n" +
@@ -61,5 +67,5 @@ public class User {
 
     public void checkOut(Statement statement) throws SQLException{}
 
-    public void checkIn(Statement statement) throws SQLException{}
+    public void checkIn(Statement statement) throws SQLException{}// TODO: check with the username if can return
 }
