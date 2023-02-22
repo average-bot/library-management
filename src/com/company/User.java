@@ -18,32 +18,6 @@ public class User {
         this.username = username;
     }
 
-    public void userMenu(Statement statement) throws SQLException {
-        System.out.print("Please choose an option:\n" +
-                "1. View items \n" +
-                "2. Check out a book \n" +
-                "3. Check in a book\n" +
-                "4. Log out\n" +
-                "Enter number here: ");
-        switch(new Scanner(System.in).nextInt()) {
-            case 1:
-                viewItems(statement);
-                break;
-            case 2:
-                checkOut(statement);
-                break;
-            case 3:
-                checkIn(statement);
-                break;
-            case 4:
-                System.out.println("logout");
-                break;
-            default:
-                System.out.println("Invalid option. Try again selecting a number.");
-                break;
-        }
-    }
-
     public void viewItems(Statement statement) throws SQLException { // TODO: Add acronym
         String query = sortingByCat? VIEW_QUERY_CAT: VIEW_QUERY_TYPE;
         ResultSet resultSet = statement.executeQuery(query);
