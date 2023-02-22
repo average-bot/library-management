@@ -22,7 +22,6 @@ public class Console {
                     break;
                 case 2:
                     UserControls userControls = new UserControls(this.statement);
-                    userControls.setUsername();
                     userMenu(userControls);
                     break;
                 case 3:

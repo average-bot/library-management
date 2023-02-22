@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 public class UserControls {
-    private String username;
     boolean sortingByCat = false;
     Statement statement;
 
@@ -13,14 +12,14 @@ public class UserControls {
         this.statement = statement;
     }
 
-    public void setUsername() {
+    public String getUsername() {
         System.out.print("Please enter your username: ");
         String username;
         do {
             username = new Scanner(System.in).next(); // No security
             username = username.toLowerCase();
-        }while(username.equals("")); // TODO: other reqs for username
-        this.username = username;
+        }while(username.equals(""));
+        return username;
     }
 
     public void changeSorting(){
@@ -67,14 +66,15 @@ public class UserControls {
 
         // Check if the item is available or borrowed to someone
         final String CHECKOUT_CHECK_QUERY = "SELECT * FROM libraryitem WHERE id="+ id +" AND Borrower IS NULL AND isBorrowable=1;";
-        boolean resultSetExists = this.statement.execute(CHECKOUT_CHECK_QUERY);
-
-        // If available run the query for borrowing
-        final String CHECKOUT_QUERY= "UPDATE libraryitem SET Borrower = '" + username +"', BorrowDate = '"+ sqlDate +"'WHERE id="+ id +" AND isBorrowable=1 AND Borrower IS NULL;";
-        if (resultSetExists){
+        ResultSet resultSet = this.statement.executeQuery(CHECKOUT_CHECK_QUERY);
+        if (resultSet.next()) {
+            // If available run the query for borrowing
+            String username = getUsername();
+            final String CHECKOUT_QUERY= "UPDATE libraryitem SET Borrower = '" + username +"', BorrowDate = '"+ sqlDate +"'WHERE id="+ id +" AND isBorrowable=1 AND Borrower IS NULL;";
             this.statement.execute(CHECKOUT_QUERY);
             System.out.println("Borrow success!");
         } else System.out.println("Error on borrowing, please check the info again!");
+        resultSet.close();
 
     }// ask for item id, check if its borrowable, check if its borrowed by someone else ? add username and time to it : show error
 
@@ -83,15 +83,16 @@ public class UserControls {
         int id = new Scanner(System.in).nextInt(); // No security
 
         // Check if the item is borrowed out to a user with the same username
-        final String RETURN_CHECK_QUERY = "SELECT * FROM libraryitem WHERE id="+ id +" AND Borrower = '"+ this.username +"';";
-        boolean resultSetExists = this.statement.execute(RETURN_CHECK_QUERY);
-
-        // If its the correct user, proceed return
-        final String RETURN_QUERY= "UPDATE libraryitem SET Borrower = NULL, BorrowDate = NULL WHERE id="+ id +";";
-        if (resultSetExists){
+        String username = getUsername();
+        final String RETURN_CHECK_QUERY = "SELECT * FROM libraryitem WHERE id="+ id +" AND Borrower = '"+ username +"';";
+        ResultSet resultSet = this.statement.executeQuery(RETURN_CHECK_QUERY);
+        if (resultSet.next()) {
+            // If its the correct user, proceed return
+            final String RETURN_QUERY= "UPDATE libraryitem SET Borrower = NULL, BorrowDate = NULL WHERE id="+ id +";";
             this.statement.execute(RETURN_QUERY);
             System.out.println("Return success!");
         } else System.out.println("Error on returning, please check the info again!");
+        resultSet.close();
     }// Ask for the item id, check if its borrowed by that user ? return : show error
 }
 //TODO: CHECKS FOR EXIST DONT WORK FOR CHECK OUT

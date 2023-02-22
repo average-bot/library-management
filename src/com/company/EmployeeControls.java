@@ -16,16 +16,15 @@ public class EmployeeControls extends UserControls {
         int id = new Scanner(System.in).nextInt();
 
         final String CHECK_IF_CAT_ITEMS = "SELECT * FROM category LEFT JOIN libraryitem ON libraryitem.CategoryId = category.Id WHERE category.Id="+ id +";";
-        boolean resultSetExists = this.statement.execute(CHECK_IF_CAT_ITEMS);
-
-        final String DELETE_CAT_QUERY = "DELETE FROM category WHERE Id="+id+";";
-
-        if (resultSetExists){
+        ResultSet resultSet = this.statement.executeQuery(CHECK_IF_CAT_ITEMS);
+        if (resultSet.next()) {
             System.out.println("Error on deleting, please check that the category is not connected to any items!");
         } else {
+            final String DELETE_CAT_QUERY = "DELETE FROM category WHERE Id="+id+";";
             this.statement.execute(DELETE_CAT_QUERY);
             System.out.println("Return success!");
         }
+        resultSet.close();
     } // get the delete cat id from user + check if exists + check if the cat is not connected to anything
 
     void editCategory() throws SQLException { //TODO: Check if categoryName exists already + ask user for id and new name
@@ -33,8 +32,8 @@ public class EmployeeControls extends UserControls {
         int id = new Scanner(System.in).nextInt();
 
         final String CHECK_CAT_QUERY = "SELECT * FROM category WHERE Id ="+ id +";";
-        boolean resultSetExists = this.statement.execute(CHECK_CAT_QUERY);
-        if (resultSetExists){
+        ResultSet resultSet = this.statement.executeQuery(CHECK_CAT_QUERY);
+        if (resultSet.next()) {
             System.out.print("Please enter the new name for the category: ");
             String name = new Scanner(System.in).next();
 
@@ -44,6 +43,7 @@ public class EmployeeControls extends UserControls {
         } else {
             System.out.println("Editing category failed. Please check if its the correct id.");
         }
+        resultSet.close();
     }// ask user for category id + check if exists + ask for new category name + update category
 
     void createCategory() throws SQLException {
@@ -51,14 +51,15 @@ public class EmployeeControls extends UserControls {
         String newCatName = new Scanner(System.in).next();
 
         final String CHECK_CAT_QUERY = "SELECT * FROM category WHERE categoryName ='"+ newCatName +"';";
-        boolean resultSetExists = this.statement.execute(CHECK_CAT_QUERY);
-        if (resultSetExists){
+        ResultSet resultSet = this.statement.executeQuery(CHECK_CAT_QUERY);
+        if (resultSet.next()) {
             System.out.println("Error on creating category, this category seems to exist. Please choose a new name!");
         } else {
             final String CREATE_CAT_QUERY = "INSERT INTO category (CategoryName) VALUES ('"+ newCatName +"');";
             this.statement.execute(CREATE_CAT_QUERY);
             System.out.println("Create category success!");
         }
+        resultSet.close();
     }// ask user for new category's name + check if categoryName exists already + create category
 
     void deleteItem() throws SQLException {
@@ -66,12 +67,13 @@ public class EmployeeControls extends UserControls {
         int id = new Scanner(System.in).nextInt();
 
         final String CHECK_ITEM_QUERY = "SELECT * FROM libraryitem WHERE id="+id+";";
-        boolean resultSetExists = this.statement.execute(CHECK_ITEM_QUERY);
-        if (resultSetExists){
+        ResultSet resultSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
+        if (resultSet.next()) {
             String DELETE_ITEM_QUERY = "DELETE FROM libraryitem WHERE Id="+id+";";
             this.statement.execute(DELETE_ITEM_QUERY);
             System.out.println("Create category success!");
         } else {System.out.println("Error on deleting an item, this item does not exist. Please choose the correct id!"); }
+        resultSet.close();
     } // ask user for id + check if exists + delete item
 
     void editItem() throws SQLException {
@@ -79,11 +81,11 @@ public class EmployeeControls extends UserControls {
         int id = new Scanner(System.in).nextInt();
 
         final String CHECK_ITEM_QUERY = "SELECT * FROM libraryitem WHERE id="+id+";";
-        boolean resultSetExists = this.statement.execute(CHECK_ITEM_QUERY);
-        if(resultSetExists){
-            ResultSet resultSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
+        ResultSet resultSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
+        if (resultSet.next()) {
+            ResultSet resultsSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
 
-            String type = resultSet.getString("ItemType");
+            String type = resultsSet.getString("ItemType");
 
             String[] reqColumnNames = getColumns(type);
             String EDIT_ITEM_QUERY ="UPDATE libraryitem SET "+ itemsQuery(reqColumnNames, type) +" WHERE id="+ id +";";
@@ -91,6 +93,7 @@ public class EmployeeControls extends UserControls {
 
             System.out.println("Edit item success!");
             resultSet.close();
+            resultsSet.close();
         } else {System.out.println("Error on editing an item, this item does not exist. Please choose the correct id!"); }
     } // ask user for id + check if exists + edit item
 
@@ -135,3 +138,4 @@ public class EmployeeControls extends UserControls {
         return queryPart;
     } // create a query from all the columns
 }
+// TODO : CLOSE RESULTSET
