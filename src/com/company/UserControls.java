@@ -44,7 +44,7 @@ public class UserControls {
     }
 
     public void showCategories() throws SQLException {
-        String SHOW_CATS_QUERY ="SELECT * FROM category";
+        final String SHOW_CATS_QUERY ="SELECT * FROM category";
         ResultSet resultSet = statement.executeQuery(SHOW_CATS_QUERY);
 
         ResultSetMetaData rsmd = resultSet.getMetaData();
