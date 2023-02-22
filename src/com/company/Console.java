@@ -1,11 +1,12 @@
 package com.company;
 
 import java.sql.*;
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class Console {
 
-    Console(Statement statement) throws SQLException {
+    Console(Statement statement) throws SQLException, ParseException {
         while (true) {
             System.out.print("Please choose a role to login:\n" +
                     "1. ADMIN \n" +
@@ -18,9 +19,7 @@ public class Console {
                     adminMenu(employee, statement);
                     break;
                 case 2:
-                    System.out.print("Please enter your username: ");
-                    String username = new Scanner(System.in).next(); // No security
-                    User user = new User(username);
+                    User user = new User();
                     userMenu(user, statement);
                     break;
                 case 3:
@@ -75,7 +74,7 @@ public class Console {
                 break;
         }
     }
-    public void userMenu(User user, Statement statement) throws SQLException {
+    public void userMenu(User user, Statement statement) throws SQLException, ParseException {
         System.out.print("Please choose an option:\n" +
                 "1. View items \n" +
                 "2. Check out a book \n" +
