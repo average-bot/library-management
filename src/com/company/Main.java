@@ -12,7 +12,7 @@ public class Main {
     // If the security was important the different roles would have different users in the db
     static final String USER = "rooter";
     static final String PASS = "rooter";
-    public static void main(String[] args) throws SQLException, ParseException {
+    public static void main(String[] args) throws SQLException {
         Connection connection = DriverManager.getConnection(DB_URL, USER, PASS);
         Statement statement = connection.createStatement();
 
