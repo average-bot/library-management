@@ -10,32 +10,30 @@ public class EmployeeControls extends UserControls {
         super(statement);
     }
     // To access the viewItems method, grants the access to other methods too if needed
-
     void deleteCategory() throws SQLException {
-        System.out.print("Please enter the category's id you want to delete: ");
-        int id = new Scanner(System.in).nextInt();
+        showCategories();
+        int id = getId("delete", "category");
 
-        final String CHECK_IF_CAT_ITEMS = "SELECT * FROM category LEFT JOIN libraryitem ON libraryitem.CategoryId = category.Id WHERE category.Id="+ id +";";
+        final String CHECK_IF_CAT_ITEMS = "SELECT libraryitem.id FROM category LEFT JOIN libraryitem ON libraryitem.CategoryId = category.Id WHERE category.Id="+ id +" AND libraryitem.id IS NOT NULL;";
         ResultSet resultSet = this.statement.executeQuery(CHECK_IF_CAT_ITEMS);
         if (resultSet.next()) {
             System.out.println("Error on deleting, please check that the category is not connected to any items!");
         } else {
             final String DELETE_CAT_QUERY = "DELETE FROM category WHERE Id="+id+";";
             this.statement.execute(DELETE_CAT_QUERY);
-            System.out.println("Return success!");
+            System.out.println("Delete success!");
         }
         resultSet.close();
     } // get the delete cat id from user + check if exists + check if the cat is not connected to anything
 
-    void editCategory() throws SQLException { //TODO: Check if categoryName exists already + ask user for id and new name
-        System.out.print("Please enter the category's id you want to edit: ");
-        int id = new Scanner(System.in).nextInt();
+    void editCategory() throws SQLException {
+        showCategories();
+        int id = getId("edit", "category");
 
         final String CHECK_CAT_QUERY = "SELECT * FROM category WHERE Id ="+ id +";";
         ResultSet resultSet = this.statement.executeQuery(CHECK_CAT_QUERY);
         if (resultSet.next()) {
-            System.out.print("Please enter the new name for the category: ");
-            String name = new Scanner(System.in).next();
+            String name = getString("new name");
 
             final String EDIT_CAT_QUERY = "UPDATE category SET CategoryName = '"+ name +"' WHERE id = "+ id +";";
             this.statement.execute(EDIT_CAT_QUERY);
@@ -47,8 +45,8 @@ public class EmployeeControls extends UserControls {
     }// ask user for category id + check if exists + ask for new category name + update category
 
     void createCategory() throws SQLException {
-        System.out.print("Please enter the new category name: ");
-        String newCatName = new Scanner(System.in).next();
+        showCategories();
+        String newCatName = getString("new category name");
 
         final String CHECK_CAT_QUERY = "SELECT * FROM category WHERE categoryName ='"+ newCatName +"';";
         ResultSet resultSet = this.statement.executeQuery(CHECK_CAT_QUERY);
@@ -63,8 +61,7 @@ public class EmployeeControls extends UserControls {
     }// ask user for new category's name + check if categoryName exists already + create category
 
     void deleteItem() throws SQLException {
-        System.out.print("Please enter the item's id you want to delete: ");
-        int id = new Scanner(System.in).nextInt();
+        int id = getId("delete", "item");
 
         final String CHECK_ITEM_QUERY = "SELECT * FROM libraryitem WHERE id="+id+";";
         ResultSet resultSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
@@ -77,8 +74,7 @@ public class EmployeeControls extends UserControls {
     } // ask user for id + check if exists + delete item
 
     void editItem() throws SQLException {
-        System.out.print("Please enter the item's id you want to edit: ");
-        int id = new Scanner(System.in).nextInt();
+        int id = getId("edit", "item");
 
         final String CHECK_ITEM_QUERY = "SELECT * FROM libraryitem WHERE id="+id+";";
         ResultSet resultSet = this.statement.executeQuery(CHECK_ITEM_QUERY);
@@ -97,14 +93,14 @@ public class EmployeeControls extends UserControls {
         } else {System.out.println("Error on editing an item, this item does not exist. Please choose the correct id!"); }
     } // ask user for id + check if exists + edit item
 
-    void createItem() {
-        System.out.print("Please enter the type of item you want to create: ");
-        String type = new Scanner(System.in).next();
+    void createItem() throws SQLException {
+        showCategories();
+        String type = getType("create");
 
-        String[] columnNames = getColumns(type); // everything but isBorrowable
-        String CREATE_ITEM_QUERY = itemsQuery(columnNames, type);
-
-
+        String[] columnNames = getColumns(type);
+        String[] queryPart = inertQuery(columnNames, type); // [columns, values]
+        String CREATE_ITEM_QUERY ="INSERT INTO libraryitem (" +queryPart[0]+ ") VALUES ("+ queryPart[1] +");";
+        statement.execute(CREATE_ITEM_QUERY);
         System.out.println("Create item success!");
     }// ask user for type (act accordingly) + create item
 
@@ -121,8 +117,7 @@ public class EmployeeControls extends UserControls {
     private String itemsQuery(String[] reqColumnNames, String type){
         String queryPart = "";
         for(String reqColumn : reqColumnNames){
-            System.out.println("Please enter new item's " + reqColumn);
-            String value = new Scanner(System.in).next();
+            String value = getString(reqColumn);
             try {
                 int intValue = Integer.parseInt(value); // if its a number
                 queryPart += reqColumn + "=" + intValue + ",";
@@ -131,11 +126,54 @@ public class EmployeeControls extends UserControls {
             }
         }
         if (type == "ref book") {
-            queryPart += "isBorrowable='" + 0 + "'";
+            queryPart += "isBorrowable=" + 0 + "";
         } else{
-            queryPart += "isBorrowable='" + 1 + "'";
+            queryPart += "isBorrowable=" + 1 + "";
         }
         return queryPart;
     } // create a query from all the columns
+
+    private String[] inertQuery(String[] columnNames, String type){
+        String columns = "";
+        String values = "";
+        for(String reqColumn : columnNames){
+            columns += reqColumn+ ", ";
+            String value = getString(reqColumn);
+            try {
+                int intValue = Integer.parseInt(value); // if its a number
+                values += intValue + ", ";
+            } catch (NumberFormatException e) { // if not a number
+                values += "'" + value + "', ";
+            }
+        }
+        columns += "isBorrowable, ";
+        if (type == "ref book") {
+            values += 0 +", ";
+
+        } else{
+            values += 1 + ", ";
+        }
+        columns += "ItemType";
+        values += "'"+type+"'";
+        return new String[]{columns, values};
+    }
+
+    private String getType(String operation){
+        System.out.print("Please enter the type of item you want to "+ operation +": ");
+        String fieldValue = "";
+        Scanner scanner;
+        do{
+            scanner = new Scanner(System.in);
+            if(scanner.hasNext()) {
+                fieldValue = scanner.nextLine();
+                fieldValue = fieldValue.toLowerCase();
+                if(fieldValue.equals("book") || fieldValue.equals("dvd") || fieldValue.equals("audio book") || fieldValue.equals("ref book")){
+                    break;
+                }
+                System.out.println("Invalid input. Please choose between book, dvd, audio book and ref book.");
+            }
+            System.out.print("Invalid input. Please input a characters: ");
+        }while(true);
+        return fieldValue;
+    }
 }
-// TODO : CLOSE RESULTSET

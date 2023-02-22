@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.text.ParseException;
 
 public class Main {
     static final String DB_URL = "jdbc:mysql://localhost:3306/library";

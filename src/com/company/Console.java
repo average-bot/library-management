@@ -14,7 +14,7 @@ public class Console {
                     "1. ADMIN \n" +
                     "2. USER \n" +
                     "3. EXIT \n" +
-                    "Enter number here: ");
+                    "Enter option number here: ");
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
                     EmployeeControls employeeControls = new EmployeeControls(this.statement);
@@ -39,39 +39,43 @@ public class Console {
             System.out.println("----------------------------");
             System.out.print("Please choose an option:\n" +
                     "1. View items \n" +
-                    "2. Create item \n" +
-                    "3. Edit item \n" +
-                    "4. Delete item \n" +
+                    "2. View Categories\n" +
+                    "3. Create item \n" +
+                    "4. Edit item \n" +
+                    "5. Delete item \n" +
                     "-------------- \n" +
-                    "5. Create category \n" +
-                    "6. Edit category \n" +
-                    "7. Delete category \n" +
+                    "6. Create category \n" +
+                    "7. Edit category \n" +
+                    "8. Delete category \n" +
                     "-------------- \n" +
-                    "8. Log out\n" +
+                    "9. Log out\n" +
                     "Enter number here: ");
             switch(new Scanner(System.in).nextInt()) {
                 case 1:
                     employeeControls.viewItems();
                     break;
                 case 2:
-                    employeeControls.createItem();
+                    employeeControls.showCategories();
                     break;
                 case 3:
-                    employeeControls.editItem();
+                    employeeControls.createItem();
                     break;
                 case 4:
-                    employeeControls.deleteItem();
+                    employeeControls.editItem();
                     break;
                 case 5:
-                    employeeControls.createCategory();
+                    employeeControls.deleteItem();
                     break;
                 case 6:
-                    employeeControls.editCategory();
+                    employeeControls.createCategory();
                     break;
                 case 7:
-                    employeeControls.deleteCategory();
+                    employeeControls.editCategory();
                     break;
                 case 8:
+                    employeeControls.deleteCategory();
+                    break;
+                case 9:
                     System.out.println("You are now logged out!");
                     flag = false;
                     System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
@@ -88,25 +92,29 @@ public class Console {
             System.out.println("----------------------------");
             System.out.print("Please choose an option:\n" +
                     "1. View items \n" +
-                    "2. Check out a book \n" +
-                    "3. Check in a book\n" +
-                    "4. Change sorting\n" +
-                    "5. Log out\n" +
-                    "Enter number here: ");
+                    "2. View categories \n" +
+                    "3. Check out a book \n" +
+                    "4. Check in a book\n" +
+                    "5. Change sorting\n" +
+                    "6. Log out\n" +
+                    "Enter option number here: ");
             switch (new Scanner(System.in).nextInt()) {
                 case 1:
                     userControls.viewItems();
                     break;
                 case 2:
-                    userControls.checkOut();
+                    userControls.showCategories();
                     break;
                 case 3:
-                    userControls.checkIn();
+                    userControls.checkOut();
                     break;
                 case 4:
-                    userControls.changeSorting();
+                    userControls.checkIn();
                     break;
                 case 5:
+                    userControls.changeSorting();
+                    break;
+                case 6:
                     System.out.println("logout");
                     flag = false;
                     System.out.println("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII");
